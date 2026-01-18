@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -9,9 +10,20 @@ from app.security import CSRFProtection
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup and shutdown"""
+    # Startup
+    init_db()
+    yield
+    # Shutdown (add cleanup if needed)
+
+
 app = FastAPI(
     title=settings.app_name,
-    debug=settings.debug
+    debug=settings.debug,
+    lifespan=lifespan
 )
 
 # Mount static files
@@ -31,12 +43,6 @@ app.include_router(chat.router, tags=["chat"])
 app.include_router(nexo_paisa.router, tags=["nexo-paisa"])
 app.include_router(calendar.router, tags=["calendar"])
 app.include_router(admin.router, tags=["admin"])
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database on startup"""
-    init_db()
 
 
 @app.get("/", response_class=HTMLResponse)

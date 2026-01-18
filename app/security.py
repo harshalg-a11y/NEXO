@@ -1,4 +1,5 @@
 from typing import Optional
+import secrets
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from fastapi import Request, HTTPException, status
 from app.config import get_settings
@@ -33,7 +34,6 @@ class CSRFProtection:
     def generate_csrf_token() -> str:
         """Generate a CSRF token"""
         serializer = URLSafeTimedSerializer(settings.csrf_secret_key)
-        import secrets
         return serializer.dumps({"csrf": secrets.token_hex(32)})
     
     @staticmethod

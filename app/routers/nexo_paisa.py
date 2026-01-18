@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+import uuid
 from app.database import get_db
 from app.models.nexo_paisa import NexoPaisaTransaction, TransactionType, TransactionStatus
 from app.security import require_auth, CSRFProtection, verify_csrf
@@ -67,7 +68,6 @@ async def load_money(
     balance_after = balance_before + amount
     
     # Create transaction
-    import uuid
     transaction = NexoPaisaTransaction(
         user_id=user_id,
         transaction_type=TransactionType.DEPOSIT,

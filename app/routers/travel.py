@@ -20,7 +20,7 @@ async def travel_page(
     user_id = require_auth(request)
     
     # Get available cars
-    cars = db.query(Car).filter(Car.is_available == True).limit(10).all()
+    cars = db.query(Car).filter(Car.is_available).limit(10).all()
     
     csrf_token = CSRFProtection.generate_csrf_token()
     
