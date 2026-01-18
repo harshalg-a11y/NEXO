@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Agriculture - NEXO{% endblock %}
+
+{% block content %}
+<div class="agro-page">
+    <div class="container">
+        <h1 class="page-title">Agriculture Advice</h1>
+        <p class="subtitle">Get AI-powered farming and plant care advice</p>
+        
+        <div class="agro-content" x-data="agroData()">
+            <div class="section">
+                <h2>Plant Database</h2>
+                <div class="cards-grid">
+                    {% for plant in plants %}
+                    <div class="card">
+                        <h3>{{ plant.name }}</h3>
+                        <p><strong>Season:</strong> {{ plant.season }}</p>
+                        <p><strong>Care:</strong> {{ plant.care }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Get Plant Care Advice</h2>
+                <div class="card">
+                    <form @submit.prevent="analyzeSubmit" class="form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <div class="form-group">
+                            <label>Describe your plant or farming question:</label>
+                            <textarea 
+                                x-model="plantDescription" 
+                                name="plant_description" 
+                                rows="4" 
+                                class="form-control"
+                                placeholder="E.g., How do I care for tomato plants in summer?"
+                                required
+                            ></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" :disabled="loading">
+                            <span x-show="!loading">Get Advice</span>
+                            <span x-show="loading">Analyzing...</span>
+                        </button>
+                    </form>
+                    
+                    <div x-show="advice" class="response-box">
+                        <h3>Expert Advice:</h3>
+                        <div x-html="advice" class="response-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function agroData() {
+    return {
+        plantDescription: '',
+        advice: '',
+        loading: false,
+        async analyzeSubmit() {
+            this.loading = true;
+            const formData = new FormData();
+            formData.append('plant_description', this.plantDescription);
+            formData.append('csrf_token', '{{ csrf_token }}');
+            
+            try {
+                const res = await fetch('/agro/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                this.advice = data.response.replace(/\n/g, '<br>');
+            } catch (error) {
+                this.advice = 'Error: Could not get advice';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

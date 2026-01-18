@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NEXO{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+    <div class="container">
+        <h1 class="page-title">Welcome, {{ user.full_name or user.email }}!</h1>
+        
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>🚗 Travel Bookings</h3>
+                <p>Manage your car and hotel bookings</p>
+                <a href="/travel" class="btn btn-primary">View Bookings</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>🏥 Health</h3>
+                <p>Get health consultations</p>
+                <a href="/health" class="btn btn-primary">Consult Now</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>🌾 Agriculture</h3>
+                <p>Get farming advice</p>
+                <a href="/agro" class="btn btn-primary">Learn More</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>📚 Education</h3>
+                <p>Access courses and resources</p>
+                <a href="/education" class="btn btn-primary">Browse Courses</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>💬 AI Chat</h3>
+                <p>Chat with our AI assistant</p>
+                <a href="/chat" class="btn btn-primary">Start Chat</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>💰 Nexo Paisa</h3>
+                <p>Manage your wallet</p>
+                <a href="/nexo-paisa" class="btn btn-primary">Open Wallet</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

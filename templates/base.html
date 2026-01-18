@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NEXO - Your All-in-One Platform{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-light dark:bg-dark text-dark dark:text-light transition-colors duration-300">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="/" class="logo">NEXO</a>
+                
+                {% if request.cookies.get('session_token') %}
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link {% if page == 'dashboard' %}active{% endif %}">Dashboard</a>
+                    <a href="/travel" class="nav-link {% if page == 'travel' %}active{% endif %}">Travel</a>
+                    <a href="/health" class="nav-link {% if page == 'health' %}active{% endif %}">Health</a>
+                    <a href="/agro" class="nav-link {% if page == 'agro' %}active{% endif %}">Agriculture</a>
+                    <a href="/education" class="nav-link {% if page == 'education' %}active{% endif %}">Education</a>
+                    <a href="/chat" class="nav-link {% if page == 'chat' %}active{% endif %}">Chat</a>
+                    <a href="/nexo-paisa" class="nav-link {% if page == 'nexo-paisa' %}active{% endif %}">Nexo Paisa</a>
+                    <a href="/calendar" class="nav-link {% if page == 'calendar' %}active{% endif %}">Calendar</a>
+                    {% if user and user.is_admin %}
+                    <a href="/admin" class="nav-link {% if page == 'admin' %}active{% endif %}">Admin</a>
+                    {% endif %}
+                    <a href="/logout" class="nav-link">Logout</a>
+                </div>
+                {% else %}
+                <div class="nav-links">
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link">Register</a>
+                </div>
+                {% endif %}
+                
+                <button 
+                    @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
+                    class="theme-toggle"
+                    title="Toggle theme"
+                >
+                    <span x-show="!darkMode">🌙</span>
+                    <span x-show="darkMode">☀️</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 NEXO. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

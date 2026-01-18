@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Health Consultation - NEXO{% endblock %}
+
+{% block content %}
+<div class="health-page">
+    <div class="container">
+        <h1 class="page-title">Health Consultation</h1>
+        <p class="subtitle">Get general health information powered by AI</p>
+        
+        <div class="card" x-data="healthConsult()">
+            <form @submit.prevent="submitConsult" class="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <div class="form-group">
+                    <label>Describe your symptoms or health query:</label>
+                    <textarea 
+                        x-model="symptoms" 
+                        name="symptoms" 
+                        rows="6" 
+                        class="form-control"
+                        placeholder="E.g., I have a headache and feel tired..."
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" :disabled="loading">
+                    <span x-show="!loading">Get Consultation</span>
+                    <span x-show="loading">Consulting...</span>
+                </button>
+            </form>
+            
+            <div x-show="response" class="response-box">
+                <h3>Health Information:</h3>
+                <div x-html="response" class="response-content"></div>
+                <p class="disclaimer">
+                    <strong>Disclaimer:</strong> This is general information only. Please consult a healthcare professional for medical advice.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function healthConsult() {
+    return {
+        symptoms: '',
+        response: '',
+        loading: false,
+        async submitConsult() {
+            this.loading = true;
+            const formData = new FormData();
+            formData.append('symptoms', this.symptoms);
+            formData.append('csrf_token', '{{ csrf_token }}');
+            
+            try {
+                const res = await fetch('/health/consult', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                this.response = data.response.replace(/\n/g, '<br>');
+            } catch (error) {
+                this.response = 'Error: Could not get consultation';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

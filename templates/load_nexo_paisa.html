@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Nexo Paisa - NEXO{% endblock %}
+
+{% block content %}
+<div class="nexo-paisa-page">
+    <div class="container">
+        <h1 class="page-title">Nexo Paisa Wallet</h1>
+        
+        <div class="wallet-balance">
+            <h2>Current Balance</h2>
+            <div class="balance-amount">₹{{ "%.2f"|format(balance) }}</div>
+        </div>
+        
+        <div class="wallet-actions" x-data="walletActions()">
+            <div class="card">
+                <h3>Load Money</h3>
+                <form @submit.prevent="loadMoney" class="form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" x-model="loadAmount" min="1" step="0.01" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" :disabled="loading">
+                        <span x-show="!loading">Load Money</span>
+                        <span x-show="loading">Processing...</span>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h3>Transfer Money</h3>
+                <form @submit.prevent="transferMoney" class="form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <label>Recipient Email</label>
+                        <input type="email" x-model="recipientEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" x-model="transferAmount" min="1" step="0.01" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" :disabled="loading">
+                        <span x-show="!loading">Transfer</span>
+                        <span x-show="loading">Processing...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="transactions">
+            <h2>Recent Transactions</h2>
+            <div class="transactions-list">
+                {% if transactions %}
+                    {% for txn in transactions %}
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <span class="transaction-type">{{ txn.transaction_type.value.upper() }}</span>
+                            <span class="transaction-desc">{{ txn.description }}</span>
+                            <span class="transaction-date">{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        <div class="transaction-amount {% if txn.transaction_type.value in ['deposit'] %}positive{% else %}negative{% endif %}">
+                            {% if txn.transaction_type.value in ['deposit'] %}+{% else %}-{% endif %}₹{{ "%.2f"|format(txn.amount) }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No transactions yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function walletActions() {
+    return {
+        loadAmount: '',
+        recipientEmail: '',
+        transferAmount: '',
+        loading: false,
+        async loadMoney() {
+            this.loading = true;
+            const formData = new FormData();
+            formData.append('amount', this.loadAmount);
+            formData.append('csrf_token', '{{ csrf_token }}');
+            
+            try {
+                const res = await fetch('/nexo-paisa/load', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                alert(data.message);
+                location.reload();
+            } catch (error) {
+                alert('Error loading money');
+            } finally {
+                this.loading = false;
+            }
+        },
+        async transferMoney() {
+            this.loading = true;
+            const formData = new FormData();
+            formData.append('recipient_email', this.recipientEmail);
+            formData.append('amount', this.transferAmount);
+            formData.append('csrf_token', '{{ csrf_token }}');
+            
+            try {
+                const res = await fetch('/nexo-paisa/transfer', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                alert(data.message);
+                location.reload();
+            } catch (error) {
+                alert('Error transferring money');
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

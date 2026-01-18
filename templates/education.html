@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Education - NEXO{% endblock %}
+
+{% block content %}
+<div class="education-page">
+    <div class="container">
+        <h1 class="page-title">Education Resources</h1>
+        <p class="subtitle">Browse courses and learning materials</p>
+        
+        <div class="courses-grid cards-grid">
+            {% for course in courses %}
+            <div class="card">
+                <h3>{{ course.title }}</h3>
+                <p>{{ course.description }}</p>
+                <button class="btn btn-primary">Enroll Now</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

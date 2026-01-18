@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - NEXO{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="container">
+        <h1 class="page-title">Admin Dashboard</h1>
+        
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="stat-value">{{ total_users }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Active Bookings</h3>
+                <div class="stat-value">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Total Transactions</h3>
+                <div class="stat-value">0</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Revenue</h3>
+                <div class="stat-value">₹0</div>
+            </div>
+        </div>
+        
+        <div class="admin-actions">
+            <h2>Quick Actions</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary">Manage Users</button>
+                <button class="btn btn-secondary">View Reports</button>
+                <button class="btn btn-secondary">System Settings</button>
+            </div>
+        </div>
+        
+        <div class="admin-tables">
+            <h2>Recent Activity</h2>
+            <p>Activity logs and detailed reports would be displayed here</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

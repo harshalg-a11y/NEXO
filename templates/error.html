@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Error - NEXO{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="container">
+        <div class="card" style="text-align: center; padding: 4rem;">
+            <h1 style="font-size: 3rem; color: var(--accent);">⚠️</h1>
+            <h2>{{ error or "An error occurred" }}</h2>
+            <a href="/" class="btn btn-primary" style="margin-top: 2rem;">Go Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
